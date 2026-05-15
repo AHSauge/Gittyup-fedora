@@ -10,8 +10,8 @@
 %global scintillua_shortcommit %(c=%{scintillua_commit}; echo ${c:0:7})
 
 Name:     Gittyup
-Version:  2.0.0^%{commitdate}git%{shortcommit}
-Release:  %autorelease
+Version:  2.0.0
+Release:  2.git%{commitdate}.%{shortcommit}%{?dist}
 Summary:  Graphical Git client designed to help you understand your source code history
 License:  MIT
 URL:      https://github.com/Murmele/Gittyup
