@@ -21,6 +21,12 @@ Source2:  https://github.com/orbitalquark/scintillua/archive/%{scintillua_commit
 #Fix CMAKE_EXE_LINKER_FLAGS being overwritten, breaking PIE
 # https://github.com/Murmele/Gittyup/pull/963
 Patch0:   0001-Append-CMAKE_EXE_LINKER_FLAGS-instead-of-overwriting.patch
+#Fix crash during rapid scrolling
+# https://github.com/Murmele/Gittyup/pull/952
+Patch1:   0002-Fix-a-re-entrancy-issue-in-the.DiffView-code.patch
+#Fix crash when using Filter by Path search
+# https://github.com/Murmele/Gittyup/pull/962
+Patch2:   0003-Fix-crash-in-Filter-by-Path-due-to-out-of-bound-acce.patch
 BuildRequires:   git g++ cmake ninja-build
 BuildRequires:   cmark-devel hunspell-devel libgit2-devel libssh2-devel lua-devel openssl-devel pcre-devel
 BuildRequires:   qt6-qtbase-devel qt6-linguist qt6-qttools-devel

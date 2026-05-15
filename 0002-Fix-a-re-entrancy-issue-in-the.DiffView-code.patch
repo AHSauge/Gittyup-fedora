@@ -1,0 +1,132 @@
+From fede28f848878821b9bd88dd73358156dd66f890 Mon Sep 17 00:00:00 2001
+From: Alf Henrik Sauge <alf.henrik.sauge@gmail.com>
+Date: Thu, 30 Apr 2026 15:40:06 +0200
+Subject: [PATCH 1/2] Fix a re-entrancy issue in the DiffView code
+
+fetchMore gets called multiple times. This queues the calls in the event loop rather than being directly executed
+This also add a guard to get an early out.
+Lastly, we drop processing events within fetchMore since there's no indication that this call is actually needed.
+---
+ src/ui/DiffView/DiffView.cpp | 16 ++++++++++------
+ src/ui/DiffView/DiffView.h   |  1 +
+ 2 files changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/src/ui/DiffView/DiffView.cpp b/src/ui/DiffView/DiffView.cpp
+index 089a11f..440800c 100644
+--- a/src/ui/DiffView/DiffView.cpp
++++ b/src/ui/DiffView/DiffView.cpp
+@@ -20,6 +20,7 @@
+ #include <QScrollBar>
+ #include <QPushButton>
+ #include <QMimeData>
++#include <QScopedValueRollback>
+ 
+ namespace {
+ 
+@@ -198,11 +199,13 @@ void DiffView::setDiff(const git::Diff &diff) {
+           fetchMore();
+       }));
+ 
+-  mConnections.append(
+-      connect(scrollBar, &QScrollBar::rangeChanged, [this](int min, int max) {
++  mConnections.append(connect(
++      scrollBar, &QScrollBar::rangeChanged, this,
++      [this](int min, int max) {
+         if (max - min < this->widget()->height() / 2 && canFetchMore())
+           fetchMore();
+-      }));
++      },
++      Qt::QueuedConnection));
+ 
+   // Request comments for this diff.
+   if (Repository *remoteRepo = view->remoteRepo()) {
+@@ -380,6 +383,10 @@ bool DiffView::canFetchMore() {
+  * use a while loop with canFetchMore() to get all
+  */
+ void DiffView::fetchMore(int fetchWidgets) {
++  if (mFetching)
++    return;
++  QScopedValueRollback rollback(mFetching, true);
++
+   QVBoxLayout *layout = static_cast<QVBoxLayout *>(widget()->layout());
+ 
+   // Add widgets.
+@@ -401,9 +408,6 @@ void DiffView::fetchMore(int fetchWidgets) {
+             fetchAll)) {
+       addedWidgets += lastFile->fetchMore(fetchAll ? -1 : 1);
+ 
+-      // Load hunk(s) and update scrollbar
+-      QApplication::processEvents();
+-
+       // Running the eventloop may trigger a view refresh
+       if (mFiles.isEmpty())
+         return;
+diff --git a/src/ui/DiffView/DiffView.h b/src/ui/DiffView/DiffView.h
+index e72a8b1..2623401 100644
+--- a/src/ui/DiffView/DiffView.h
++++ b/src/ui/DiffView/DiffView.h
+@@ -138,6 +138,7 @@ private:
+   Account::CommitComments mComments;
+ 
+   bool mEnabled{true};
++  bool mFetching{false};
+   DiffTreeModel *mDiffTreeModel{nullptr};
+   QWidget *mParent{nullptr};
+   QVBoxLayout *mFileWidgetLayout{nullptr};
+-- 
+2.54.0
+
+
+From 6929fd5d735e506129726cbd9c7c8749261d1c6c Mon Sep 17 00:00:00 2001
+From: Alf Henrik Sauge <alf.henrik.sauge@gmail.com>
+Date: Thu, 14 May 2026 18:31:53 +0200
+Subject: [PATCH 2/2] Replace scrollbar logic within fetchMore with an early
+ out and limiting the number of widgets added in one block
+
+---
+ src/ui/DiffView/DiffView.cpp | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/src/ui/DiffView/DiffView.cpp b/src/ui/DiffView/DiffView.cpp
+index 440800c..6f65a35 100644
+--- a/src/ui/DiffView/DiffView.cpp
++++ b/src/ui/DiffView/DiffView.cpp
+@@ -383,7 +383,10 @@ bool DiffView::canFetchMore() {
+  * use a while loop with canFetchMore() to get all
+  */
+ void DiffView::fetchMore(int fetchWidgets) {
+-  if (mFetching)
++  // Back out early if we're reentrant or lazy loading isn't triggered
++  if (mFetching ||
++      (verticalScrollBar()->maximum() - verticalScrollBar()->value() >
++       height() / 2))
+     return;
+   QScopedValueRollback rollback(mFetching, true);
+ 
+@@ -402,20 +405,12 @@ void DiffView::fetchMore(int fetchWidgets) {
+   bool fetchFiles = true;
+   if (!mFiles.isEmpty()) {
+     FileWidget *lastFile = mFiles.last();
+-    while (lastFile->canFetchMore() &&
+-           ((verticalScrollBar()->maximum() - verticalScrollBar()->value() <
+-             height() / 2) ||
+-            fetchAll)) {
+-      addedWidgets += lastFile->fetchMore(fetchAll ? -1 : 1);
+-
+-      // Running the eventloop may trigger a view refresh
+-      if (mFiles.isEmpty())
+-        return;
++    if (lastFile->canFetchMore()) {
++      addedWidgets += lastFile->fetchMore(fetchAll ? -1 : fetchWidgets);
+     }
+ 
+     // Stop loading files
+-    if (verticalScrollBar()->maximum() - verticalScrollBar()->value() >
+-        height() / 2)
++    if (fetchAll == false && addedWidgets >= fetchWidgets)
+       fetchFiles = false;
+   }
+ 
+-- 
+2.54.0
+
