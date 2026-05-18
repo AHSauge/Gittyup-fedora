@@ -1,7 +1,7 @@
 %global gittag      gittyup_v2.0.0
-%global commit      68bfd9cebe5ad7b81e724d25c1355cdbd4a3a351
+%global commit      8a03e53ce373ad10e03cd6950a58b64a0148b5af
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commitdate  20260515
+%global commitdate  20260517
 
 %global lexilla_commit      82b21cd1348366a7dc25d57c6de532968da40541
 %global lexilla_shortcommit %(c=%{lexilla_commit}; echo ${c:0:7})
@@ -10,26 +10,14 @@
 %global scintillua_shortcommit %(c=%{scintillua_commit}; echo ${c:0:7})
 
 Name:     Gittyup
-Version:  2.0.0
-Release:  2.git%{commitdate}.%{shortcommit}%{?dist}
+Version:  2.0.0^git%{commitdate}.%{shortcommit}
+Release:  1%{?dist}
 Summary:  Graphical Git client designed to help you understand your source code history
 License:  MIT
 URL:      https://github.com/Murmele/Gittyup
 Source0:  https://github.com/Murmele/Gittyup/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
 Source1:  https://github.com/ScintillaOrg/lexilla/archive/%{lexilla_commit}/lexilla-%{lexilla_shortcommit}.tar.gz
 Source2:  https://github.com/orbitalquark/scintillua/archive/%{scintillua_commit}/scintillua-%{scintillua_shortcommit}.tar.gz
-#Fix CMAKE_EXE_LINKER_FLAGS being overwritten, breaking PIE
-# https://github.com/Murmele/Gittyup/pull/963
-Patch0:   0001-Append-CMAKE_EXE_LINKER_FLAGS-instead-of-overwriting.patch
-#Fix crash during rapid scrolling
-# https://github.com/Murmele/Gittyup/pull/952
-Patch1:   0002-Fix-a-re-entrancy-issue-in-the.DiffView-code.patch
-#Fix crash when using Filter by Path search
-# https://github.com/Murmele/Gittyup/pull/962
-Patch2:   0003-Fix-crash-in-Filter-by-Path-due-to-out-of-bound-acce.patch
-#Fix performance regression in settings code
-# https://github.com/Murmele/Gittyup/pull/958
-Patch3:   0004-Add-a-cache-for-settings-to-avoid-reading-the-settin.patch
 BuildRequires:   git g++ cmake ninja-build
 BuildRequires:   cmark-devel hunspell-devel libgit2-devel libssh2-devel lua-devel openssl-devel pcre-devel
 BuildRequires:   qt6-qtbase-devel qt6-linguist qt6-qttools-devel
