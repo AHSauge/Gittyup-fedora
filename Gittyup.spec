@@ -1,7 +1,7 @@
 %global gittag      gittyup_v2.0.0
-%global commit      8a03e53ce373ad10e03cd6950a58b64a0148b5af
+%global commit      a52b17a626fcebd815efcb75c98495039853dd57
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commitdate  20260517
+%global commitdate  20260721
 
 %global lexilla_commit      82b21cd1348366a7dc25d57c6de532968da40541
 %global lexilla_shortcommit %(c=%{lexilla_commit}; echo ${c:0:7})
