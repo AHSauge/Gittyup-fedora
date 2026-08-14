@@ -11,13 +11,14 @@
 
 Name:     Gittyup
 Version:  2.0.0^git%{commitdate}.%{shortcommit}
-Release:  1%{?dist}
+Release:  2%{?dist}
 Summary:  Graphical Git client designed to help you understand your source code history
 License:  MIT
 URL:      https://github.com/Murmele/Gittyup
 Source0:  https://github.com/Murmele/Gittyup/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
 Source1:  https://github.com/ScintillaOrg/lexilla/archive/%{lexilla_commit}/lexilla-%{lexilla_shortcommit}.tar.gz
 Source2:  https://github.com/orbitalquark/scintillua/archive/%{scintillua_commit}/scintillua-%{scintillua_shortcommit}.tar.gz
+Patch0:   0001-shell_injection_fix.patch
 BuildRequires:   git g++ cmake ninja-build
 BuildRequires:   cmark-devel hunspell-devel libgit2-devel libssh2-devel lua-devel openssl-devel pcre-devel
 BuildRequires:   qt6-qtbase-devel qt6-linguist qt6-qttools-devel
