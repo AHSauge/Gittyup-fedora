@@ -1,0 +1,11 @@
+--- a/test/dep/zip/CMakeLists.txt
++++ b/test/dep/zip/CMakeLists.txt
+@@ -70,7 +70,7 @@
+ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR
+         "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR
+         "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
+-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror -pedantic -Wno-implicit-function-declaration")
++  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic -Wno-implicit-function-declaration")
+ endif (MSVC)
+ 
+ ####
