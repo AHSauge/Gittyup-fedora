@@ -14,7 +14,7 @@
 
 Name:     Gittyup
 Version:  2.0.0^git%{commitdate}.%{shortcommit}
-Release:  2%{?dist}
+Release:  3%{?dist}
 Summary:  Graphical Git client designed to help you understand your source code history
 License:  MIT
 URL:      https://github.com/Murmele/Gittyup
@@ -24,22 +24,25 @@ Source2:  https://github.com/orbitalquark/scintillua/archive/%{scintillua_commit
 Source3:  https://github.com/kuba--/zip/archive/%{kuba_zip_commit}/zip-%{kuba_zip_shortcommit}.tar.gz
 Patch0:   0001-shell_injection_fix.patch
 Patch1:   0002-fix_zip_test_dep_werror.patch
-BuildRequires:   gcc-c++
-BuildRequires:   cmake
-BuildRequires:   ninja-build
-BuildRequires:   pkgconfig(libcmark)
-BuildRequires:   pkgconfig(hunspell)
-BuildRequires:   pkgconfig(libgit2)
-BuildRequires:   pkgconfig(lua)
-BuildRequires:   pkgconfig(openssl)
-BuildRequires:   cmake(Qt6Concurrent)
-BuildRequires:   cmake(Qt6Core)
-BuildRequires:   cmake(Qt6DBus)
-BuildRequires:   cmake(Qt6Gui)
-BuildRequires:   cmake(Qt6LinguistTools)
-BuildRequires:   cmake(Qt6Network)
-BuildRequires:   cmake(Qt6Widgets)
-BuildRequires:   cmake(Qt6Test)
+Patch2:   0003-Fix-qt.qpa.services-Failed-to-register-with-host-por.patch
+BuildRequires:  gcc-c++
+BuildRequires:  cmake
+BuildRequires:  ninja-build
+BuildRequires:  desktop-file-utils
+BuildRequires:  libappstream-glib
+BuildRequires:  pkgconfig(libcmark)
+BuildRequires:  pkgconfig(hunspell)
+BuildRequires:  pkgconfig(libgit2)
+BuildRequires:  pkgconfig(lua)
+BuildRequires:  pkgconfig(openssl)
+BuildRequires:  cmake(Qt6Concurrent)
+BuildRequires:  cmake(Qt6Core)
+BuildRequires:  cmake(Qt6DBus)
+BuildRequires:  cmake(Qt6Gui)
+BuildRequires:  cmake(Qt6LinguistTools)
+BuildRequires:  cmake(Qt6Network)
+BuildRequires:  cmake(Qt6Widgets)
+BuildRequires:  cmake(Qt6Test)
 
 %description
 Gittyup is a graphical Git client designed to help you understand and manage
@@ -48,6 +51,7 @@ Gittyup is a graphical Git client designed to help you understand and manage
 %prep
 %autosetup -n %{name}-%{commit} -p1 -N
 %patch -P0 -p1
+%patch -P2 -p1
 
 # Replace the placeholders for submodules with the downloaded source
 rmdir dep/scintilla/lexilla
@@ -77,10 +81,14 @@ mv test/dep/zip-%{kuba_zip_commit} test/dep/zip
     -DUSE_SYSTEM_QT=ON \
     -DENABLE_UPDATE_OVER_GUI=OFF \
     -DENABLE_TESTS=ON \
+    -DGENERATE_APPDATA=ON \
     -DCMAKE_SKIP_RPATH=ON
 %cmake_build
 
 %check
+desktop-file-validate %{buildroot}%{_datarootdir}/applications/com.github.Murmele.%{name}.desktop
+appstream-util validate-relax --nonet %{buildroot}%{_datarootdir}/metainfo/com.github.Murmele.%{name}.appdata.xml
+
 export QT_QPA_PLATFORM=offscreen
 ctest --test-dir redhat-linux-build --output-on-failure -j1 \
   --exclude-regex 'branches_panel|referencelist'
@@ -92,14 +100,15 @@ ctest --test-dir redhat-linux-build --output-on-failure -j1 \
 %{_bindir}/gittyup
 %{_bindir}/gittyup-indexer
 %{_bindir}/gittyup-relauncher
-%{_datadir}/Gittyup/*
-%{_datadir}/applications/gittyup.desktop
+%{_datadir}/%{name}/*
 %{_datadir}/icons/hicolor/*
-%{_datadir}/locale/Gittyup/*
+%{_datadir}/locale/%{name}/*
+%{_datarootdir}/applications/com.github.Murmele.%{name}.desktop
+%{_datarootdir}/metainfo/com.github.Murmele.%{name}.appdata.xml
 %exclude %{_includedir}/zip/*
 %exclude %{_exec_prefix}/lib/cmake/zip/*
 %exclude %{_exec_prefix}/lib/libzip*
-%license %{_datadir}/licenses/Gittyup/LICENSE
+%license %{_datadir}/licenses/%{name}/LICENSE
 %doc README.md
 
 %changelog

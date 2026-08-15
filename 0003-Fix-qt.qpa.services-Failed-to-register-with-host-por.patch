@@ -1,0 +1,33 @@
+From 150c91bb5b68a330ff64a0857d5175a190cead0f Mon Sep 17 00:00:00 2001
+From: Alf Henrik Sauge <alf.henrik.sauge@gmail.com>
+Date: Mon, 18 May 2026 16:37:35 +0200
+Subject: [PATCH] Fix qt.qpa.services: Failed to register with host portal
+
+The files need to match the identifier used
+---
+ src/app/CMakeLists.txt | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/src/app/CMakeLists.txt b/src/app/CMakeLists.txt
+index c191aae..cefc7f9 100755
+--- a/src/app/CMakeLists.txt
++++ b/src/app/CMakeLists.txt
+@@ -215,13 +215,11 @@ else()
+   if(UNIX)
+     install(
+       FILES ${CMAKE_SOURCE_DIR}/rsrc/linux/com.github.Murmele.Gittyup.desktop
+-      DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+-      RENAME ${GITTYUP_EXECUTABLE_NAME}.desktop)
++      DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+     if(${GENERATE_APPDATA})
+       install(
+         FILES ${APPDATA}
+-        DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo
+-        RENAME ${GITTYUP_EXECUTABLE_NAME}.appdata.xml)
++        DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
+     endif()
+   endif()
+ 
+-- 
+2.55.0
+
