@@ -19,10 +19,22 @@ Source0:  https://github.com/Murmele/Gittyup/archive/%{commit}/%{name}-%{shortco
 Source1:  https://github.com/ScintillaOrg/lexilla/archive/%{lexilla_commit}/lexilla-%{lexilla_shortcommit}.tar.gz
 Source2:  https://github.com/orbitalquark/scintillua/archive/%{scintillua_commit}/scintillua-%{scintillua_shortcommit}.tar.gz
 Patch0:   0001-shell_injection_fix.patch
-BuildRequires:   git g++ cmake ninja-build
-BuildRequires:   cmark-devel hunspell-devel libgit2-devel libssh2-devel lua-devel openssl-devel pcre-devel
-BuildRequires:   qt6-qtbase-devel qt6-linguist qt6-qttools-devel
-Requires:   cmark hunspell lua openssl pcre qt6-qtbase
+BuildRequires:   gcc-c++
+BuildRequires:   cmake
+BuildRequires:   ninja-build
+BuildRequires:   pkgconfig(libcmark)
+BuildRequires:   pkgconfig(hunspell)
+BuildRequires:   pkgconfig(libgit2)
+BuildRequires:   pkgconfig(lua)
+BuildRequires:   pkgconfig(openssl)
+BuildRequires:   cmake(Qt6Concurrent)
+BuildRequires:   cmake(Qt6Core)
+BuildRequires:   cmake(Qt6DBus)
+BuildRequires:   cmake(Qt6Gui)
+BuildRequires:   cmake(Qt6LinguistTools)
+BuildRequires:   cmake(Qt6Network)
+BuildRequires:   cmake(Qt6Widgets)
+BuildRequires:   cmake(Qt6Test)
 
 %description
 Gittyup is a graphical Git client designed to help you understand and manage
