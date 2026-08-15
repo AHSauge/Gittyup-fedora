@@ -66,15 +66,13 @@ mv dep/scintilla/scintillua-%{scintillua_commit} dep/scintilla/scintillua
 %files
 %{_bindir}/gittyup
 %{_bindir}/gittyup-indexer
+%{_bindir}/gittyup-relauncher
 %{_datadir}/Gittyup/*
 %{_datadir}/applications/gittyup.desktop
 %{_datadir}/icons/hicolor/*
 %{_datadir}/locale/Gittyup/*
 %license %{_datadir}/licenses/Gittyup/LICENSE
 %doc README.md
-
-%exclude
-%{_bindir}/gittyup-relauncher
 
 %changelog
 %autochangelog
