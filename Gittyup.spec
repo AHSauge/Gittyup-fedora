@@ -14,7 +14,7 @@
 
 Name:     Gittyup
 Version:  2.0.0^git%{commitdate}.%{shortcommit}
-Release:  3%{?dist}
+Release:  4%{?dist}
 Summary:  Graphical Git client designed to help you understand your source code history
 License:  MIT
 URL:      https://github.com/Murmele/Gittyup
@@ -43,6 +43,9 @@ BuildRequires:  cmake(Qt6LinguistTools)
 BuildRequires:  cmake(Qt6Network)
 BuildRequires:  cmake(Qt6Widgets)
 BuildRequires:  cmake(Qt6Test)
+
+Recommends:     git-lfs
+Recommends:     libsecret
 
 %description
 Gittyup is a graphical Git client designed to help you understand and manage
@@ -112,4 +115,5 @@ ctest --test-dir redhat-linux-build --output-on-failure -j1 \
 %doc README.md
 
 %changelog
-%autochangelog
+* Sun Aug 16 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260721.a52b17a-4
+- Add git-lfs and libsecret as weak dependencies
