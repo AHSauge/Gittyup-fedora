@@ -1,0 +1,22 @@
+From 73f8033640b9a07b345db42e1d6efb2072af34ca Mon Sep 17 00:00:00 2001
+From: Alf Henrik Sauge <alf.henrik.sauge@gmail.com>
+Date: Thu, 10 Sep 2026 19:54:03 +0200
+Subject: [PATCH] Fix build error in test/Filter.cpp
+
+---
+ test/Filter.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/Filter.cpp b/test/Filter.cpp
+index b8ff7c724..9724f4e13 100644
+--- a/test/Filter.cpp
++++ b/test/Filter.cpp
+@@ -80,7 +80,7 @@ void TestFilter::rejectsShellInjectionInFilename() {
+   // new, attacker-controlled statements.
+   QString maliciousName = "evil';>injected_marker;echo'safe";
+ 
+-  QString path = Test::extractRepository("FilterCommandInjection.zip", true);
++  QString path = Test::extractRepository("FilterCommandInjection.zip");
+   QVERIFY(!path.isEmpty());
+   git::Repository repo = git::Repository::open(path);
+   QVERIFY(repo.isValid());

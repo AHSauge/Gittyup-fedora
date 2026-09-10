@@ -1,7 +1,7 @@
 %global gittag      gittyup_v2.0.0
-%global commit      a52b17a626fcebd815efcb75c98495039853dd57
+%global commit      5a2e6c9432846c190e61cb333a7bd2661a2b8d17
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commitdate  20260721
+%global commitdate  20260910
 
 %global lexilla_commit      82b21cd1348366a7dc25d57c6de532968da40541
 %global lexilla_shortcommit %(c=%{lexilla_commit}; echo ${c:0:7})
@@ -14,7 +14,7 @@
 
 Name:     Gittyup
 Version:  2.0.0^git%{commitdate}.%{shortcommit}
-Release:  4%{?dist}
+Release:  1%{?dist}
 Summary:  Graphical Git client designed to help you understand your source code history
 License:  MIT
 URL:      https://github.com/Murmele/Gittyup
@@ -22,9 +22,8 @@ Source0:  https://github.com/Murmele/Gittyup/archive/%{commit}/%{name}-%{shortco
 Source1:  https://github.com/ScintillaOrg/lexilla/archive/%{lexilla_commit}/lexilla-%{lexilla_shortcommit}.tar.gz
 Source2:  https://github.com/orbitalquark/scintillua/archive/%{scintillua_commit}/scintillua-%{scintillua_shortcommit}.tar.gz
 Source3:  https://github.com/kuba--/zip/archive/%{kuba_zip_commit}/zip-%{kuba_zip_shortcommit}.tar.gz
-Patch0:   0001-shell_injection_fix.patch
+Patch0:   0001-Fix-build-error-in-test-Filter.patch
 Patch1:   0002-fix_zip_test_dep_werror.patch
-Patch2:   0003-Fix-qt.qpa.services-Failed-to-register-with-host-por.patch
 BuildRequires:  gcc-c++
 BuildRequires:  cmake
 BuildRequires:  ninja-build
@@ -54,7 +53,6 @@ Gittyup is a graphical Git client designed to help you understand and manage
 %prep
 %autosetup -n %{name}-%{commit} -p1 -N
 %patch -P0 -p1
-%patch -P2 -p1
 
 # Replace the placeholders for submodules with the downloaded source
 rmdir dep/scintilla/lexilla
@@ -115,5 +113,10 @@ ctest --test-dir redhat-linux-build --output-on-failure -j1 \
 %doc README.md
 
 %changelog
+* Thu Sep 10 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260721.5a2e6c9-1
+- Update to latest master, which includes previously carried security fix
+- Advanced GUI is removed to improve usability
+- Adds option to disable autohiding the sidebar
+- Fixes a bug where last repo. isn't opened along with the application
 * Sun Aug 16 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260721.a52b17a-4
 - Add git-lfs and libsecret as weak dependencies
