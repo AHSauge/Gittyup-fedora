@@ -1,13 +1,16 @@
 %global gittag      gittyup_v2.0.0
-%global commit      5db6800667aa0a26897d1428f8084bfcc25936e6
+%global commit      908ad7db5ee3ca03c36a6a4ce59a6a5ef1e55ac8
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commitdate  20260916
+%global commitdate  20260922
 
-%global lexilla_commit      82b21cd1348366a7dc25d57c6de532968da40541
+%global lexilla_commit      334b90a64b0960d98446b80a24e430eac1a4a2ee
 %global lexilla_shortcommit %(c=%{lexilla_commit}; echo ${c:0:7})
 
-%global scintillua_commit      33d0e3433a2046c1077f6b33fc801caf6bfac7a9
+%global scintillua_commit      34495ab09b9e7f064295c4cddc82b66cb5cb0a27
 %global scintillua_shortcommit %(c=%{scintillua_commit}; echo ${c:0:7})
+
+%global scintilla_version   5.6.6
+%global scintilla_nodots    %(v=%{scintilla_version}; echo ${v//./})
 
 %global kuba_zip_commit      d7a2252a537926cbdef8512741a322a183fcfd09
 %global kuba_zip_shortcommit %(c=%{kuba_zip_commit}; echo ${c:0:7})
@@ -22,6 +25,7 @@ Source0:  https://github.com/Murmele/Gittyup/archive/%{commit}/%{name}-%{shortco
 Source1:  https://github.com/ScintillaOrg/lexilla/archive/%{lexilla_commit}/lexilla-%{lexilla_shortcommit}.tar.gz
 Source2:  https://github.com/orbitalquark/scintillua/archive/%{scintillua_commit}/scintillua-%{scintillua_shortcommit}.tar.gz
 Source3:  https://github.com/kuba--/zip/archive/%{kuba_zip_commit}/zip-%{kuba_zip_shortcommit}.tar.gz
+Source4:  https://downloads.sourceforge.net/project/scintilla/scintilla/%{scintilla_version}/scintilla%{scintilla_nodots}.tgz
 Patch0:   0002-fix_zip_test_dep_werror.patch
 BuildRequires:  gcc-c++
 BuildRequires:  cmake
@@ -35,6 +39,7 @@ BuildRequires:  pkgconfig(lua)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  cmake(Qt6Concurrent)
 BuildRequires:  cmake(Qt6Core)
+BuildRequires:  cmake(Qt6Core5Compat)
 BuildRequires:  cmake(Qt6DBus)
 BuildRequires:  cmake(Qt6Gui)
 BuildRequires:  cmake(Qt6LinguistTools)
@@ -63,6 +68,10 @@ mv dep/scintilla/lexilla-%{lexilla_commit} dep/scintilla/lexilla
 tar -xf %{SOURCE2} -C dep/scintilla/
 mv dep/scintilla/scintillua-%{scintillua_commit} dep/scintilla/scintillua
 
+# Scintilla is fetched by CMake FetchContent; providing it in dep/scintilla/scintilla
+# makes CMake use it as an offline source instead of downloading it
+tar -xf %{SOURCE4} -C dep/scintilla/
+
 tar -xf %{SOURCE3} -C test/dep
 mv test/dep/zip-%{kuba_zip_commit} test/dep/zip
 %patch -P0 -p1
@@ -78,6 +87,7 @@ mv test/dep/zip-%{kuba_zip_commit} test/dep/zip
     -DUSE_SYSTEM_LUA=ON  \
     -DUSE_SYSTEM_OPENSSL=ON \
     -DUSE_SYSTEM_QT=ON \
+    -DFETCHCONTENT_FULLY_DISCONNECTED=ON \
     -DENABLE_UPDATE_OVER_GUI=OFF \
     -DENABLE_TESTS=ON \
     -DGENERATE_APPDATA=ON \
@@ -111,10 +121,15 @@ ctest --test-dir redhat-linux-build --output-on-failure -j1 \
 %doc README.md
 
 %changelog
-* Wed Sep 16 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260721.5db6800-1
+* Fri Sep 25 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260922.908ad7d-1
+- Asynchronous loading the diff
+- Upgrade to Lexilla 5.5.3, Scintilla 5.6.6, and Scintillua 6.7
+- Fixes menu buttons crashing the application if no repository is loaded
+- Fixes lazy loading not always filling up the screen with hunks
+* Wed Sep 16 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260916.5db6800-1
 - Pull in latest master
 - Drop patch to fix build error
-* Thu Sep 10 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260721.5a2e6c9-1
+* Thu Sep 10 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260910.5a2e6c9-1
 - Update to latest master, which includes previously carried security fix
 - Advanced GUI is removed to improve usability
 - Adds option to disable autohiding the sidebar
