@@ -1,7 +1,7 @@
 %global gittag      gittyup_v2.0.0
-%global commit      908ad7db5ee3ca03c36a6a4ce59a6a5ef1e55ac8
+%global commit      01b0b00151994e7f6644fda57fe669e3345dce92
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commitdate  20260922
+%global commitdate  20260930
 
 %global lexilla_commit      334b90a64b0960d98446b80a24e430eac1a4a2ee
 %global lexilla_shortcommit %(c=%{lexilla_commit}; echo ${c:0:7})
@@ -121,6 +121,13 @@ ctest --test-dir redhat-linux-build --output-on-failure -j1 \
 %doc README.md
 
 %changelog
+* Wed Sep 30 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260930.01b0b00-1
+- Adds new dark mode theme
+- Adds option for terminals to take repository path
+- Fixes issues from Scintilla and Scintillua upgrade
+- Fixes issue with duplicate external merge tool entries in context menu
+- Fixes issue with spellchecker sometimes fasely indicating incorrect spelling
+- Fixes issues with missed file updates
 * Fri Sep 25 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260922.908ad7d-1
 - Asynchronous loading the diff
 - Upgrade to Lexilla 5.5.3, Scintilla 5.6.6, and Scintillua 6.7
