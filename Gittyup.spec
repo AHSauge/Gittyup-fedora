@@ -1,7 +1,7 @@
 %global gittag      gittyup_v2.0.0
-%global commit      01b0b00151994e7f6644fda57fe669e3345dce92
+%global commit      0115d943a8692fee20642060659ddc668904bcd9
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commitdate  20260930
+%global commitdate  20261016
 
 %global lexilla_commit      334b90a64b0960d98446b80a24e430eac1a4a2ee
 %global lexilla_shortcommit %(c=%{lexilla_commit}; echo ${c:0:7})
@@ -121,6 +121,9 @@ ctest --test-dir redhat-linux-build --output-on-failure -j1 \
 %doc README.md
 
 %changelog
+* Fri Oct 16 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20261016.0115d94-1
+- Fixes Gittyup hanging whilst being closed if the indexer is still running
+- Fixes a crash related to empty autor email
 * Wed Sep 30 2026 Alf Henrik Sauge <alf.henrik.sauge@gmail.com> - 2.0.0^git20260930.01b0b00-1
 - Adds new dark mode theme
 - Adds option for terminals to take repository path
